@@ -1,0 +1,351 @@
+
+##########Seccion de Smartphone
+
+(deftemplate Smartphone
+    (slot marca (type SYMBOL))
+    (slot modelo (type SYMBOL))
+    (slot precio (type NUMBER))
+)
+
+
+(assert (Smartphone (marca Apple) (modelo iPhone-15) (precio 17000.0)))
+(assert (Smartphone (marca Samsung) (modelo Note-12) (precio 9000.0)))
+(assert (Smartphone (marca Google) (modelo Pixel-6) (precio 7990.99)))
+(assert (Smartphone (marca OnePlus) (modelo 9-Pro) (precio 8990.0)))
+
+
+(do-for-all-facts ((?f Smartphone)) TRUE
+    (printout t "Smartphone: " ?f:marca " " ?f:modelo " Precio: " ?f:precio crlf)
+)
+
+
+##########Seccion de Computadora
+
+(deftemplate Computadora
+    (slot marca (type SYMBOL))
+    (slot modelo (type SYMBOL))
+    (slot precio (type NUMBER))
+)
+
+(assert (Computadora (marca Apple) (modelo MacBook-Air) (precio 18000.0)))
+(assert (Computadora (marca HP) (modelo Spectre-x360) (precio 13000.0)))
+(assert (Computadora (marca Lenovo) (modelo ThinkPad-X1-Carbon) (precio 15000.0)))
+(assert (Computadora (marca Asus) (modelo ZenBook-Pro-Duo) (precio 20000.0)))
+
+(do-for-all-facts ((?f Computadora)) TRUE
+    (printout t "Computadora: " ?f:marca " " ?f:modelo " Precio: " ?f:precio crlf)
+)
+
+
+##########Seccion de Accesorios
+
+(deftemplate Accesorios
+    (slot nombre (type SYMBOL))
+    (slot tipo (type SYMBOL))
+    (slot precio (type NUMBER))
+)
+
+(assert (Accesorios (nombre Funda-para-cel) (tipo Funda) (precio 200.0)))
+(assert (Accesorios (nombre Mica-para-cel) (tipo Mica) (precio 100.0)))
+(assert (Accesorios (nombre Teclado-Bluetooth-para-Computadoras) (tipo Teclado) (precio 300.0)))
+(assert (Accesorios (nombre Auriculares-Inalámbricos) (tipo Auriculares) (precio 400.0)))
+
+(do-for-all-facts ((?f Accesorios)) TRUE
+    (printout t "Accesorios: " ?f:nombre " " ?f:tipo " Precio: " ?f:precio crlf)
+)
+
+
+##########Seccion de Clientes
+
+(deftemplate Clientes
+    (slot nombre (type SYMBOL))
+    (slot edad (type INTEGER))
+    (slot tipo (type SYMBOL))
+)
+
+(assert (Clientes (nombre Juan-Pérez) (edad 35) (tipo Menudista)))
+(assert (Clientes (nombre María-López) (edad 28) (tipo Menudista)))
+(assert (Clientes (nombre Empresa-1) (tipo Mayorista)))
+(assert (Clientes (nombre Empresa-2) (tipo Mayorista)))
+(assert (Clientes (nombre Empresa-3) (tipo Mayorista)))
+(assert (Clientes (nombre Pedro-Gómez) (edad 42) (tipo Menudista)))
+
+(do-for-all-facts ((?f Clientes)) TRUE
+    (printout t "Cliente: " ?f:nombre " " ?f:edad " Tipo: " ?f:tipo crlf)
+)
+
+
+##########Seccion de TarjetasCredito
+
+(deftemplate TarjetasCredito
+    (slot banco (type SYMBOL))
+    (slot grupo (type SYMBOL))
+    (slot fecha-expiracion (type SYMBOL))
+)
+
+(assert (TarjetasCredito (banco BBVA) (grupo Visa) (fecha-expiracion 01-12-23)))
+(assert (TarjetasCredito (banco Banamex) (grupo Mastercard) (fecha-expiracion 05-10-24)))
+(assert (TarjetasCredito (banco Liverpool) (grupo Visa) (fecha-expiracion 03-09-25)))
+(assert (TarjetasCredito (banco Santander) (grupo Mastercard) (fecha-expiracion 07-07-23)))
+
+(do-for-all-facts ((?f TarjetasCredito)) TRUE
+    (printout t "Banco: " ?f:banco "Grupo " ?f:grupo " Fecha expiracion: " ?f:fecha-expiracion crlf)
+)
+
+
+##########Seccion de Vales
+
+(deftemplate Vales
+    (slot valor (type NUMBER))
+    (slot tipo (type SYMBOL))
+)
+
+(assert (Vales (valor 50.0) (tipo Descuento)))
+(assert (Vales (valor 100.0) (tipo Descuento)))
+(assert (Vales (valor 25.0) (tipo Regalo)))
+(assert (Vales (valor 75.0) (tipo Descuento)))
+
+(do-for-all-facts ((?f Vales)) TRUE
+    (printout t "Valor: " ?f:valor "Tipo " ?f:tipo crlf)
+)
+
+
+##########Seccion de OrdenCompra
+
+(deftemplate OrdenCompra
+    (slot producto (type SYMBOL))
+    (slot cliente (type SYMBOL))
+    (slot forma-pago (type SYMBOL))
+    (slot cantidad (type INTEGER))
+)
+
+(assert (OrdenCompra (producto Laptop) (cliente Juan-Pérez) (forma-pago Efectivo) (cantidad 1000)))
+(assert (OrdenCompra (producto smartphone) (cliente Empresa-3) (forma-pago Tarjeta) (cantidad 5000)))
+(assert (OrdenCompra (producto MacBook-Air) (cliente Empresa-3) (forma-pago Tarjeta) (cantidad 6000)))
+(assert (OrdenCompra (producto Tablet) (cliente María-López) (forma-pago Vales) (cantidad 1500)))
+(assert (OrdenCompra (producto Monitor) (cliente Pedro-Gómez) (forma-pago Efectivo) (cantidad 2000)))
+
+(do-for-all-facts ((?f OrdenCompra)) TRUE
+    (printout t "Producto: " ?f:producto "Cliente " ?f:cliente " Forma de pago: " ?f:forma-pago "Cantidad: " ?f:cantidad crlf)
+)
+
+##########Seccion de Reglas
+
+######Smartphone
+
+1**Regla - Cuenta cuantos Smartphone se tiene registrados FUNCIONA
+
+(deffunction count-facts-Smartphone ()
+   (length$ (find-all-facts ((?f Smartphone)) TRUE))
+)
+
+(defrule Contar-facts-Smartphone
+   =>
+   (printout t "Número de Smartphone: " (count-facts-Smartphone) crlf)
+)
+
+2**Regla - imprime el Smartphone con el precio más elevado FUNCIONA
+
+(defrule Smartphone-mas-caro
+   ?f1 <- (Smartphone (modelo ?modelo1) (precio ?precio1))
+   (not (Smartphone (precio ?precio2&:(> ?precio2 ?precio1))))
+   =>
+   (printout t "El smartphone más caro es " ?modelo1 " con un precio de " ?precio1 crlf)
+)
+
+3**Regla - Smartphone con precio menor a 10,000
+
+(defrule Smartphone-precio-bajo
+   ?f <- (Smartphone (modelo ?modelo) (precio ?precio&:(< ?precio 10000.0)))
+   =>
+   (printout t "El smartphone " ?modelo " tiene un precio menor a $10,000: " ?precio crlf)
+   (retract ?f)
+)
+
+
+######Computadora
+
+4**Regla - Cuenta cuantas Computadoras se tienen registradas FUNCIONA
+
+(deffunction count-facts-Computadora ()
+   (length$ (find-all-facts ((?f Computadora)) TRUE))
+)
+
+(defrule Contar-facts-Computadora
+   =>
+   (printout t "Número de Computadoras: " (count-facts-Computadora) crlf)
+)
+
+5**Regla - imprime Computadora con el precio más elevado FUNCIONA
+
+(defrule Computadora-mas-cara
+   ?f2 <- (Computadora (modelo ?modelo2) (precio ?precio2))
+   (not (Computadora (precio ?precio3&:(> ?precio3 ?precio2))))
+   =>
+   (printout t "La computadora más cara es " ?modelo2 " con un precio de " ?precio2 crlf)
+)
+
+######Accesorios
+
+6**Regla - Cuenta cuantos Accesorios se tienen registrados FUNCIONA
+
+(deffunction count-facts-Accesorios ()
+   (length$ (find-all-facts ((?f Accesorios)) TRUE))
+)
+
+(defrule Contar-facts-Accesorios
+   =>
+   (printout t "Número de Accesorios: " (count-facts-Accesorios) crlf)
+)
+
+7**Regla - imprime Accesorio con el precio más elevado FUNCIONA
+
+(defrule Accesorio-mas-caro
+   ?f3 <- (Accesorios (nombre ?nombre) (precio ?precio3))
+   (not (Accesorios (precio ?precio4&:(> ?precio4 ?precio3))))
+   =>
+   (printout t "El accesorio más caro es " ?nombre " con un precio de " ?precio3 crlf)
+)
+
+######Clientes
+
+8**Regla - cuantos clientes hay
+
+(deffunction count-facts-Clientes ()
+   (length$ (find-all-facts ((?f Clientes)) TRUE))
+)
+
+(defrule Contar-facts-Clientes
+   =>
+   (printout t "Número de Clientes: " (count-facts-Clientes) crlf)
+)
+
+9**Regla - menciona el grupo al que pertenecen los clientes FUNCIONA
+
+(defrule Agrupar-clientes
+   (Clientes (nombre ?nombre) (tipo ?tipo))
+   =>
+   (printout t "Cliente " ?nombre " pertenece al grupo " ?tipo crlf)
+)
+
+
+######TarjetasCredito
+
+10**Regla - cuántas tarjetas de crédito se tienen registradas
+
+(deffunction count-facts-TarjetasCredito ()
+   (length$ (find-all-facts ((?f TarjetasCredito)) TRUE))
+)
+
+(defrule Contar-facts-TarjetasCredito
+   =>
+   (printout t "Número de Tarjetas de Crédito: " (count-facts-TarjetasCredito) crlf)
+)
+
+11**Regla - tarjetas de crédito del grupo Visa
+
+(defrule TarjetasCredito-Visa
+   ?f <- (TarjetasCredito (banco ?banco) (grupo Visa) (fecha-expiracion ?fecha-expiracion))
+   =>
+   (printout t "Tarjeta de crédito del banco " ?banco " del grupo Visa con fecha de expiración " ?fecha-expiracion crlf)
+)
+
+12**Regla - tarjetas de crédito del grupo Mastercard
+
+(defrule TarjetasCredito-Visa
+   ?f <- (TarjetasCredito (banco ?banco) (grupo Mastercard) (fecha-expiracion ?fecha-expiracion))
+   =>
+   (printout t "Tarjeta de crédito del banco " ?banco " del grupo Mastercard con fecha de expiración " ?fecha-expiracion crlf)
+)
+
+######Vales
+
+13**Regla - Cuantos vales hay
+
+(deffunction count-facts-Vales ()
+   (length$ (find-all-facts ((?f Vales)) TRUE))
+)
+
+(defrule Contar-facts-Vales
+   =>
+   (printout t "Número de Vales: " (count-facts-Vales) crlf)
+)
+
+14**Regla - Cuantos vales hay por tipo
+
+(deffunction count-facts-Vales-por-tipo (?tipo)
+   (length$ (find-all-facts ((?f Vales)) (eq ?f:tipo ?tipo)))
+)
+
+(defrule Contar-facts-Vales-por-tipo-Descuento
+   =>
+   (printout t "Número de Vales de Descuento: " (count-facts-Vales-por-tipo Descuento) crlf)
+)
+
+(defrule Contar-facts-Vales-por-tipo-Regalo
+   =>
+   (printout t "Número de Vales de Regalo: " (count-facts-Vales-por-tipo Regalo) crlf)
+)
+
+15**Regla - vales de descuento con valor mayor a 50
+
+(defrule Vales-Descuento-mayor-a-50
+   ?f <- (Vales (valor ?valor&:(> ?valor 50.0)) (tipo Descuento))
+   =>
+   (printout t "Vale de descuento con valor mayor a 50: " ?valor crlf)
+)
+
+######OrdenCompra
+
+16**Regla - menciona si se ofrece un descuento a que cliente por su compra FUNCIONA
+
+(defrule Descuento-funda-mica
+   (OrdenCompra (producto smartphone) (cliente ?cliente) (forma-pago ?forma-pago) (cantidad ?cantidad))
+=>
+   (printout t "Ofece a " ?cliente " una funda y mica con 15% de descuento" crlf)
+)
+
+17**Regla - suma la cantidad de las compras que se hicieron FUNCIONA
+
+(deffunction sumar-total-compras ()
+   (bind ?total 0)
+   (do-for-all-facts ((?f OrdenCompra)) TRUE
+      (bind ?total (+ ?total ?f:cantidad))
+   )
+   ?total
+)
+
+(defrule Sumar-total-compras
+   =>
+   (printout t "La suma total de las compras en todas las OrdenCompra es: " (sumar-total-compras) crlf)
+)
+
+18**Regla - cuantas ordenes de compra se han realizado con vales
+
+(deffunction count-OrdenCompra-con-forma-pago (?forma-pago)
+   (length$ (find-all-facts ((?f OrdenCompra)) (eq ?f:forma-pago ?forma-pago)))
+)
+
+(defrule Contar-OrdenCompra-con-Vales
+   (OrdenCompra (forma-pago Vales))
+   =>
+   (printout t "Número de OrdenCompra en forma de pago con Vales: " (count-OrdenCompra-con-forma-pago Vales) crlf)
+)
+
+19**Regla - cuantas ordenes de compra se han realizado con efectivo
+
+(defrule Contar-OrdenCompra-con-Efectivo
+   (OrdenCompra (forma-pago Efectivo))
+   =>
+   (printout t "Número de OrdenCompra en forma de pago con Efectivo: " (count-OrdenCompra-con-forma-pago Efectivo) crlf)
+)
+
+20**Regla - cuantas ordenes de compra se han realizado con Tarjeta
+
+(defrule Contar-OrdenCompra-con-Tarjeta
+   (OrdenCompra (forma-pago Tarjeta))
+   =>
+   (printout t "Número de OrdenCompra en forma de pago con Tarjeta: " (count-OrdenCompra-con-forma-pago Tarjeta) crlf)
+)
+
+
